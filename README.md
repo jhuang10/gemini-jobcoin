@@ -7,13 +7,16 @@ Preface* I am not a frontend developer, and have very little front end experienc
 
 ### Requirements
 Java 8
+
 Gradle (wrapper included with project)
 
 ### How to Run:
 ./gradlew bootRun
+
 This will compile and start the webserver as well as spin up the UI on port 8080 
 
 Webapp Ui build via vaalin located at http://localhost:8080
+
 Please note that only the mixer portion calls the mixer webapp/controllers hosted on port 8080, the rest of it is basically calling the api provided at https://jobcoin.gemini.com/garbage-renewal.
 
 ### Understanding of the Goal:
@@ -22,31 +25,31 @@ The goal of this project is to grant someone who wants to keep how much crypto c
 ### Breakdown
 
 #### The Assumption:
-The user has one main wallet with funds and has decided on how much they want to mix
-Prior to using the mixer, the User has created or controls N wallets that they will provide to the mixer.
+- The user has one main wallet with funds and has decided on how much they want to mix.
+- Prior to using the mixer, the User has created or controls N wallets that they will provide to the mixer.
 
 #### The Mixer:
-The user tells the mixer about his/her N Addresses to which he/she wants the funds to end up in.
-Once the mixer receives a request, it give the user a newly created deposit address and tell them how long the mixer will wait.
+- The user tells the mixer about his/her N Addresses to which he/she wants the funds to end up in.
+- Once the mixer receives a request, it give the user a newly created deposit address and tell them how long the mixer will wait.
 
 #### The User:
-Having recieved the deposit address and expiraiton date from the mixer, the can then send their coins to provided address
+- Having recieved the deposit address and expiraiton date from the mixer, the can then send their coins to provided address
 
 #### The Mixer
-The mixer will poll this address for funds every second until the wait period is over. 
-Since Tte Created Destination Address has no funds to start with, it will check the deposit address for a balance greater than 0 to conclude the user is done.
-If the balance of the deposit wallet is greater than zero before the expiration period, the mixer transfer all funds it has at the moment it notices to central/house account.
-The mixer will divide the funds up randomly into N chunks, where N is the amount of address originally provided to the mixer. 
-Those chunks will then get transferred to the destination address the user provided space apart in short intervals of time. 
-The sum all jobcoins sent will total what the user sent to the deposit address.
+- The mixer will poll this address for funds every second until the wait period is over. 
+- Since Tte Created Destination Address has no funds to start with, it will check the deposit address for a balance greater than 0 to conclude the user is done.
+- If the balance of the deposit wallet is greater than zero before the expiration period, the mixer transfer all funds it has at the moment it notices to central/house account.
+- The mixer will divide the funds up randomly into N chunks, where N is the amount of address originally provided to the mixer. 
+- Those chunks will then get transferred to the destination address the user provided space apart in short intervals of time. 
+- The sum all jobcoins sent will total what the user sent to the deposit address.
 
 ### Main Components
 ##### The MixerService: 
-Main class of this webapp. Delegates task to the JobCoinService and TransactionScheduler. Also responsible for breaking ups the transaction into chunks.
+- Main class of this webapp. Delegates task to the JobCoinService and TransactionScheduler. Also responsible for breaking ups the transaction into chunks.
 ##### TransactionScheduler: 
-Responsible for scheduling transactions in discrete intervals of time.
+- Responsible for scheduling transactions in discrete intervals of time.
 ##### JobCoinService: 
-Is the service that is actually resposible for polling for balances and making transactions happen.
+- Is the service that is actually resposible for polling for balances and making transactions happen.
 
 ### Sample flow using POSTMAN oppose to using basic UI provided in localhost:8080
 
@@ -78,9 +81,9 @@ Is the service that is actually resposible for polling for balances and making t
 	response body: {"status": "OK"}
 
 ##### Query the all transactions endpoint to see the transactions between the "HOUSE ADDRESS" and the destination address
-	request type: POST
+	request type: GET
 	request uri: http://jobcoin.gemini.com/garbage-renewal/api/transactions
 
-will be easier to see from: https://jobcoin.gemini.com/garbage-renewal under the section Transactions. It will take a couple of refreshes because the transactions from "HOUSE ADDRESS" to destination addresses are broken up into chunks and sent a different times in the future.
+will be easier to see from: https://jobcoin.gemini.com/garbage-renewal under the section Transactions. It will take a couple of refreshes because the transactions from "HOUSE ADDRESS" to the destination addresses are broken up into chunks and sent a different times in the future.
 
 
